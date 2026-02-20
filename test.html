@@ -1,9 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TypeForge — Test</title>
+  <link rel="icon" href="logo.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -65,6 +67,78 @@
       text-decoration:none;display:flex;align-items:center;gap:.3rem;transition:color .2s;
     }
     .nav-back:hover{color:var(--cyan);}
+    /* Donation button */
+    .btn-donate{
+      display:inline-flex;align-items:center;gap:.35rem;
+      background:linear-gradient(135deg,#f687b3,#ed64a6);
+      color:#fff;font-family:'Inter',sans-serif;
+      font-size:.78rem;font-weight:700;
+      padding:.34rem .9rem;border-radius:50px;
+      border:none;cursor:pointer;
+      transition:transform .2s,box-shadow .2s;
+      box-shadow:0 2px 12px rgba(246,135,179,.35);
+      letter-spacing:.3px;flex-shrink:0;
+    }
+    .btn-donate:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 5px 18px rgba(246,135,179,.5);}
+    .btn-donate:active{transform:scale(.97);}
+
+    /* Donation modal */
+    .donate-overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,.72);
+      backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+      z-index:300;display:flex;align-items:center;justify-content:center;
+      padding:1rem;opacity:0;pointer-events:none;
+      transition:opacity .28s ease;
+    }
+    .donate-overlay.show{opacity:1;pointer-events:all;}
+    .donate-modal{
+      background:var(--modal);border:1px solid var(--border);
+      border-radius:24px;padding:2.5rem 2rem 2rem;
+      max-width:340px;width:100%;text-align:center;
+      box-shadow:0 32px 80px rgba(0,0,0,.55);
+      position:relative;
+      transform:scale(.88) translateY(20px);
+      transition:transform .32s cubic-bezier(.34,1.56,.64,1),background .4s;
+    }
+    .donate-overlay.show .donate-modal{transform:scale(1) translateY(0);}
+    .donate-close{
+      position:absolute;top:1rem;right:1rem;
+      background:var(--bg3);border:1px solid var(--border);
+      color:var(--text2);font-size:.9rem;
+      width:28px;height:28px;border-radius:50%;
+      cursor:pointer;display:flex;align-items:center;justify-content:center;
+      transition:background .2s,color .2s,border-color .2s;
+      font-family:'Inter',sans-serif;
+    }
+    .donate-close:hover{background:rgba(246,135,179,.15);color:#f687b3;border-color:#f687b3;}
+    .donate-heart{
+      font-size:2.5rem;margin-bottom:.5rem;
+      background:linear-gradient(135deg,#f687b3,#ed64a6);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      animation:heartbeat 1.4s ease infinite;
+    }
+    .donate-title{font-size:1.3rem;font-weight:800;letter-spacing:-.3px;margin-bottom:.4rem;}
+    .donate-sub{font-size:.8rem;color:var(--text2);line-height:1.6;margin-bottom:1.2rem;}
+    .donate-qr-wrap{
+      border-radius:16px;overflow:hidden;
+      border:2px solid rgba(246,135,179,.3);
+      margin-bottom:1rem;
+      box-shadow:0 4px 20px rgba(246,135,179,.15);
+    }
+    .donate-qr-img{width:100%;height:auto;display:block;}
+    .donate-upi{
+      font-family:'JetBrains Mono',monospace;font-size:.8rem;
+      color:var(--cyan);font-weight:600;margin-bottom:.4rem;
+    }
+    .donate-thanks{font-size:.78rem;color:var(--text2);}
+    @keyframes heartbeat{
+      0%,100%{transform:scale(1);}
+      14%{transform:scale(1.15);}
+      28%{transform:scale(1);}
+      42%{transform:scale(1.1);}
+      70%{transform:scale(1);}
+    }
+
     .toggle{
       width:44px;height:24px;background:var(--bg2);border:1px solid var(--border);
       border-radius:50px;cursor:pointer;position:relative;
@@ -308,9 +382,28 @@
     <a href="index.html" class="logo">TypeForge</a>
     <div class="nav-right">
       <a href="index.html" class="nav-back">← Home</a>
+      <button class="btn-donate" onclick="document.getElementById('donateModal').classList.add('show')" aria-label="Donate">
+        ♥ Donate
+      </button>
       <button class="toggle" id="themeToggle" aria-label="Toggle theme"></button>
     </div>
   </nav>
+
+  <!-- DONATION MODAL -->
+  <div class="donate-overlay" id="donateModal" onclick="if(event.target===this)this.classList.remove('show')">
+    <div class="donate-modal">
+      <button class="donate-close" onclick="document.getElementById('donateModal').classList.remove('show')" aria-label="Close">✕</button>
+      <div class="donate-heart">♥</div>
+      <h3 class="donate-title">Support TypeForge</h3>
+      <p class="donate-sub">Scan to donate via UPI — every contribution keeps this free for everyone!</p>
+      <div class="donate-qr-wrap">
+        <img src="image.png"
+          alt="UPI QR Code — pradeep chauhan15@ptyes" class="donate-qr-img" />
+      </div>
+      <p class="donate-upi">pradeep chauhan15@ptyes</p>
+      <p class="donate-thanks">Thank you for your support! 🙏</p>
+    </div>
+  </div>
 
   <div class="app">
 
