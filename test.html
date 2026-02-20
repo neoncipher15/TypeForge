@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TypeForge — Test</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── Variables ─────────────────────────────────────── */
+    :root[data-theme="dark"]{
+      --bg:#0e0e1a;--bg2:#16162a;--bg3:rgba(255,255,255,.045);
+      --border:rgba(255,255,255,.08);--border-h:rgba(99,179,237,.5);
+      --text:#e2e8f0;--text2:#718096;--text3:#4a5568;
+      --cyan:#63b3ed;--purple:#9f7aea;--pink:#f687b3;
+      --green:#68d391;--red:#fc8181;--yellow:#f6e05e;
+      --glow:rgba(99,179,237,.1);--glow2:rgba(159,122,234,.1);
+      --nav:rgba(14,14,26,.92);--card:rgba(22,22,42,.97);
+      --modal:rgba(12,12,22,.99);--sh:0 24px 64px rgba(0,0,0,.55);
+    }
+    :root[data-theme="light"]{
+      --bg:#f0f4ff;--bg2:#ffffff;--bg3:rgba(0,0,0,.035);
+      --border:rgba(0,0,0,.08);--border-h:rgba(99,102,241,.5);
+      --text:#1a1a2e;--text2:#718096;--text3:#a0aec0;
+      --cyan:#3182ce;--purple:#6b46c1;--pink:#d53f8c;
+      --green:#276749;--red:#c53030;--yellow:#b7791f;
+      --glow:rgba(49,130,206,.08);--glow2:rgba(107,70,193,.08);
+      --nav:rgba(240,244,255,.94);--card:rgba(255,255,255,.98);
+      --modal:rgba(236,240,255,.99);--sh:0 24px 64px rgba(0,0,0,.1);
+    }
+
+    /* ── Reset ─────────────────────────────────────────── */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{height:100%;}
+    body{
+      font-family:'Inter',sans-serif;
+      background:var(--bg);color:var(--text);
+      min-height:100vh;overflow-x:hidden;
+      transition:background .4s,color .4s;
+    }
+
+    /* ── Background orbs ───────────────────────────────── */
+    .orb{position:fixed;border-radius:50%;pointer-events:none;filter:blur(90px);z-index:0;}
+    .orb1{width:500px;height:500px;background:var(--glow);top:-150px;left:-150px;}
+    .orb2{width:400px;height:400px;background:var(--glow2);bottom:-100px;right:-100px;}
+
+    /* ── Navbar ────────────────────────────────────────── */
+    nav{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      background:var(--nav);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+      border-bottom:1px solid var(--border);
+      height:58px;display:flex;align-items:center;padding:0 2rem;
+      justify-content:space-between;transition:background .4s,border-color .4s;
+    }
+    .logo{
+      font-weight:900;font-size:1.2rem;letter-spacing:-.5px;
+      background:linear-gradient(135deg,var(--cyan),var(--purple));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      text-decoration:none;
+    }
+    .nav-right{display:flex;align-items:center;gap:1rem;}
+    .nav-back{
+      font-size:.82rem;font-weight:500;color:var(--text2);
+      text-decoration:none;display:flex;align-items:center;gap:.3rem;transition:color .2s;
+    }
+    .nav-back:hover{color:var(--cyan);}
+    .toggle{
+      width:44px;height:24px;background:var(--bg2);border:1px solid var(--border);
+      border-radius:50px;cursor:pointer;position:relative;
+      transition:background .3s,border-color .3s;flex-shrink:0;
+    }
+    .toggle::after{
+      content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;
+      border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));
+      transition:transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    [data-theme="light"] .toggle::after{transform:translateX(20px);}
+
+    /* ── Layout ────────────────────────────────────────── */
+    .app{
+      position:relative;z-index:1;
+      max-width:860px;margin:0 auto;
+      padding:80px 1.5rem 4rem;
+      min-height:100vh;
+      display:flex;flex-direction:column;gap:1.5rem;
+    }
+
+    /* ── Mode bar ──────────────────────────────────────── */
+    .mode-bar{display:flex;flex-direction:column;gap:.75rem;}
+    .mode-row{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;}
+    .mode-label{
+      font-size:.66rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+      color:var(--text3);margin-right:.2rem;min-width:3.2rem;
+    }
+    .pill{
+      background:var(--bg3);border:1px solid var(--border);
+      color:var(--text2);font-size:.82rem;font-weight:600;
+      padding:.32rem .88rem;border-radius:50px;cursor:pointer;
+      transition:all .18s;white-space:nowrap;font-family:'Inter',sans-serif;
+    }
+    .pill:hover{border-color:var(--border-h);color:var(--text);}
+    .pill.active{
+      background:linear-gradient(135deg,var(--cyan),var(--purple));
+      border-color:transparent;color:#fff;box-shadow:0 2px 14px var(--glow);
+    }
+
+    /* ── Live stats ────────────────────────────────────── */
+    .live-stats{display:flex;gap:2.5rem;align-items:flex-end;flex-wrap:wrap;}
+    .stat{display:flex;flex-direction:column;align-items:flex-start;}
+    .stat-val{
+      font-family:'JetBrains Mono',monospace;font-size:2.4rem;
+      font-weight:700;line-height:1;color:var(--cyan);
+      transition:color .25s;min-width:3ch;
+    }
+    .stat-val.dim{color:var(--text3);}
+    .stat-lbl{
+      font-size:.62rem;font-weight:700;text-transform:uppercase;
+      letter-spacing:2px;color:var(--text3);margin-top:.25rem;
+    }
+    .timer-warn{color:var(--yellow) !important;}
+    .timer-danger{color:var(--red) !important;}
+
+    /* ── Progress bar ──────────────────────────────────── */
+    .progress-wrap{height:3px;background:var(--bg3);border-radius:50px;overflow:hidden;}
+    .progress-bar{
+      height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));
+      border-radius:50px;width:0%;transition:width .15s linear;
+    }
+
+    /* ── Typing area ───────────────────────────────────── */
+    .typing-wrap{
+      background:var(--card);border:1px solid var(--border);
+      border-radius:20px;padding:2.5rem;
+      backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+      box-shadow:var(--sh);
+      transition:border-color .25s,background .4s,box-shadow .25s;
+      cursor:text;position:relative;overflow:hidden;
+    }
+    .typing-wrap.focused{
+      border-color:var(--border-h);
+      box-shadow:var(--sh),0 0 0 1px var(--border-h),0 0 48px var(--glow);
+    }
+    /* Unfocused overlay */
+    .unfocused-overlay{
+      position:absolute;inset:0;border-radius:20px;
+      background:rgba(14,14,26,.65);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+      display:flex;align-items:center;justify-content:center;
+      opacity:0;pointer-events:none;
+      transition:opacity .2s;z-index:2;
+    }
+    [data-theme="light"] .unfocused-overlay{background:rgba(240,244,255,.65);}
+    .unfocused-overlay.visible{opacity:1;pointer-events:all;cursor:pointer;}
+    .unfocused-msg{
+      display:flex;flex-direction:column;align-items:center;gap:.6rem;
+      color:var(--text2);font-size:.9rem;font-weight:500;
+    }
+    .unfocused-msg .kbd{
+      background:var(--bg2);border:1px solid var(--border);
+      border-radius:6px;padding:.15rem .55rem;
+      font-family:'JetBrains Mono',monospace;font-size:.75rem;
+      color:var(--text);
+    }
+
+    /* Characters */
+    #quote-display{
+      font-family:'JetBrains Mono',monospace;
+      font-size:clamp(.95rem,1.9vw,1.15rem);
+      line-height:2.1;letter-spacing:.02em;
+      color:var(--text3);min-height:96px;
+      word-break:break-word;user-select:none;
+      position:relative;z-index:1;
+    }
+    .char{transition:color .04s;}
+    .char.correct{color:var(--green);}
+    .char.wrong{
+      color:var(--red);
+      text-decoration:underline;text-underline-offset:3px;
+      text-decoration-color:rgba(252,129,129,.5);
+    }
+    .char.cur{color:var(--text);position:relative;}
+    .char.cur::before{
+      content:'';position:absolute;left:-1px;top:12%;height:76%;width:2px;
+      background:var(--cyan);border-radius:2px;
+      animation:blink .85s step-end infinite;
+    }
+
+    /* Hidden real input */
+    #typing-input{
+      position:fixed;top:-9999px;left:-9999px;
+      opacity:0;width:1px;height:1px;
+      font-size:16px; /* prevent iOS zoom */
+    }
+
+    /* ── Controls ──────────────────────────────────────── */
+    .controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+    .hint{font-size:.73rem;color:var(--text3);display:flex;align-items:center;gap:.35rem;flex-wrap:wrap;}
+    .kbd-sm{
+      background:var(--bg2);border:1px solid var(--border);border-radius:5px;
+      padding:.08rem .42rem;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--text2);
+    }
+    .btn-restart{
+      display:inline-flex;align-items:center;gap:.5rem;
+      background:var(--bg3);border:1px solid var(--border);
+      color:var(--text2);font-family:'Inter',sans-serif;
+      font-size:.84rem;font-weight:600;padding:.52rem 1.4rem;
+      border-radius:50px;cursor:pointer;
+      transition:border-color .18s,color .18s,background .18s,transform .15s;
+    }
+    .btn-restart:hover{border-color:var(--border-h);color:var(--cyan);background:var(--glow);transform:translateY(-1px);}
+    .btn-restart:active{transform:translateY(0);}
+
+    /* ── Results Modal ─────────────────────────────────── */
+    .overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,.72);
+      backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+      z-index:200;display:flex;align-items:center;justify-content:center;
+      padding:1rem;opacity:0;pointer-events:none;transition:opacity .28s;
+    }
+    .overlay.show{opacity:1;pointer-events:all;}
+    .modal{
+      background:var(--modal);border:1px solid var(--border);
+      border-radius:24px;padding:3rem 2.5rem;max-width:480px;width:100%;
+      text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.6);
+      transform:scale(.88) translateY(24px);
+      transition:transform .32s cubic-bezier(.34,1.56,.64,1),background .4s;
+    }
+    .overlay.show .modal{transform:scale(1) translateY(0);}
+    .modal-emoji{font-size:3.5rem;margin-bottom:.8rem;display:block;}
+    .modal h2{font-size:1.9rem;font-weight:800;letter-spacing:-.5px;margin-bottom:.3rem;}
+    .modal .sub{color:var(--text2);font-size:.87rem;margin-bottom:2rem;}
+    .modal-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;}
+    .ms{
+      background:var(--bg3);border:1px solid var(--border);
+      border-radius:14px;padding:1.2rem .5rem;
+      transition:background .4s,border-color .4s;
+    }
+    .ms .val{
+      font-family:'JetBrains Mono',monospace;font-size:1.9rem;font-weight:700;
+      background:linear-gradient(135deg,var(--cyan),var(--purple));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      display:block;
+    }
+    .ms .lbl{
+      font-size:.63rem;text-transform:uppercase;letter-spacing:1.5px;
+      color:var(--text3);font-weight:700;margin-top:.3rem;display:block;
+    }
+    /* Extra modal stats row */
+    .modal-stats-extra{
+      display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;margin-bottom:1.5rem;
+    }
+    .ms-sm{
+      background:var(--bg3);border:1px solid var(--border);
+      border-radius:12px;padding:.8rem .5rem;
+      transition:background .4s,border-color .4s;
+    }
+    .ms-sm .val{
+      font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;
+      color:var(--cyan);display:block;
+    }
+    .ms-sm .lbl{
+      font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;
+      color:var(--text3);font-weight:700;margin-top:.2rem;display:block;
+    }
+    .modal-pb{
+      font-size:.82rem;color:var(--green);margin-bottom:1.2rem;
+      font-weight:600;display:none;
+      background:rgba(104,211,145,.08);border:1px solid rgba(104,211,145,.25);
+      border-radius:50px;padding:.4rem 1rem;
+    }
+    .modal-pb.show{display:inline-block;}
+    .btn-again{
+      width:100%;background:linear-gradient(135deg,var(--cyan),var(--purple));
+      color:#fff;font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;
+      padding:.9rem;border:none;border-radius:50px;cursor:pointer;
+      transition:transform .18s,box-shadow .18s;
+      box-shadow:0 4px 20px var(--glow);
+    }
+    .btn-again:hover{transform:translateY(-2px);box-shadow:0 8px 28px var(--glow);}
+    .btn-again:active{transform:translateY(0);}
+    .btn-home{
+      display:block;margin-top:.8rem;font-size:.82rem;color:var(--text2);
+      text-decoration:none;transition:color .2s;
+    }
+    .btn-home:hover{color:var(--cyan);}
+
+    /* ── Keyframes ─────────────────────────────────────── */
+    @keyframes blink{50%{opacity:0;}}
+
+    /* ── Responsive ────────────────────────────────────── */
+    @media(max-width:580px){
+      nav{padding:0 1rem;}
+      .app{padding:68px 1rem 3rem;gap:1.2rem;}
+      .typing-wrap{padding:1.4rem 1.1rem;}
+      .modal{padding:2rem 1.4rem;}
+      .modal-stats{gap:.6rem;}
+      .modal-stats-extra{gap:.5rem;}
+      .live-stats{gap:1.5rem;}
+      .stat-val{font-size:1.9rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+
+  <nav>
+    <a href="index.html" class="logo">TypeForge</a>
+    <div class="nav-right">
+      <a href="index.html" class="nav-back">← Home</a>
+      <button class="toggle" id="themeToggle" aria-label="Toggle theme"></button>
+    </div>
+  </nav>
+
+  <div class="app">
+
+    <!-- MODE SELECTOR -->
+    <div class="mode-bar" id="modeBar">
+      <div class="mode-row">
+        <span class="mode-label">Mode</span>
+        <button class="pill" data-group="mode" data-val="time"        onclick="setMode('time')">⏱ Time</button>
+        <button class="pill" data-group="mode" data-val="words"       onclick="setMode('words')">📝 Words</button>
+        <button class="pill" data-group="mode" data-val="quote"       onclick="setMode('quote')">💬 Quote</button>
+        <button class="pill" data-group="mode" data-val="zen"         onclick="setMode('zen')">🧘 Zen</button>
+        <button class="pill" data-group="mode" data-val="punctuation" onclick="setMode('punctuation')">✍️ Punct</button>
+        <button class="pill" data-group="mode" data-val="numbers"     onclick="setMode('numbers')">🔢 Numbers</button>
+      </div>
+      <div class="mode-row" id="subRow"></div>
+    </div>
+
+    <!-- LIVE STATS -->
+    <div class="live-stats">
+      <div class="stat">
+        <div class="stat-val dim" id="wpm-val">–</div>
+        <div class="stat-lbl">WPM</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val dim" id="acc-val">–</div>
+        <div class="stat-lbl">Accuracy</div>
+      </div>
+      <div class="stat" id="timer-stat">
+        <div class="stat-val dim" id="timer-val">–</div>
+        <div class="stat-lbl" id="timer-lbl">Time</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val dim" id="chars-val">0</div>
+        <div class="stat-lbl">Correct</div>
+      </div>
+    </div>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+
+    <!-- TYPING AREA -->
+    <div class="typing-wrap" id="typingWrap">
+      <!-- Unfocused overlay -->
+      <div class="unfocused-overlay visible" id="unfocusedOverlay" onclick="focusInput()">
+        <div class="unfocused-msg">
+          <span>Click here or press <span class="kbd">Enter</span> to begin</span>
+        </div>
+      </div>
+      <div id="quote-display"></div>
+    </div>
+
+    <!-- Hidden real input — kept in DOM but off-screen -->
+    <input type="text" id="typing-input"
+      autocomplete="off" autocorrect="off" autocapitalize="off"
+      spellcheck="false" tabindex="-1"
+      aria-label="Type here"/>
+
+    <!-- CONTROLS -->
+    <div class="controls">
+      <div class="hint">
+        <span class="kbd-sm">Tab</span>+<span class="kbd-sm">Enter</span> restart
+        &nbsp;·&nbsp;
+        <span class="kbd-sm">Esc</span> reset
+        <span id="zen-hint" style="display:none">&nbsp;·&nbsp;<span class="kbd-sm">Esc</span> finish zen</span>
+      </div>
+      <button class="btn-restart" onclick="resetTest()">↺ Restart</button>
+    </div>
+
+  </div><!-- /app -->
+
+  <!-- RESULTS MODAL -->
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <div class="modal">
+      <span class="modal-emoji" id="m-emoji">🎉</span>
+      <h2 id="m-title">Test Complete!</h2>
+      <p class="sub">Here's how you performed</p>
+      <div class="modal-stats">
+        <div class="ms"><span class="val" id="m-wpm">–</span><span class="lbl">WPM</span></div>
+        <div class="ms"><span class="val" id="m-acc">–</span><span class="lbl">Accuracy</span></div>
+        <div class="ms"><span class="val" id="m-chars">–</span><span class="lbl">Correct</span></div>
+      </div>
+      <div class="modal-stats-extra">
+        <div class="ms-sm"><span class="val" id="m-wrong">–</span><span class="lbl">Errors</span></div>
+        <div class="ms-sm"><span class="val" id="m-time">–</span><span class="lbl">Time Taken</span></div>
+      </div>
+      <div class="modal-pb" id="m-pb">🏆 New Personal Best!</div>
+      <button class="btn-again" onclick="resetTest()">Try Again ↺</button>
+      <a href="index.html" class="btn-home">← Back to Home</a>
+    </div>
+  </div>
+
+  <script>
+  // ═══════════════════════════════════════════════════════
+  // DATA
+  // ═══════════════════════════════════════════════════════
+  const DATA = {
+    time: [
+      "the quick brown fox jumps over the lazy dog pack my box with five dozen liquor jugs",
+      "programming is not about typing but about thinking clearly and solving real problems every day",
+      "every expert was once a beginner and every master was once a disaster at their craft",
+      "simplicity is the ultimate sophistication and the hallmark of truly elegant design thinking",
+      "practice makes permanent not perfect so make sure you always practice the right things daily",
+      "speed is nothing without accuracy focus on hitting every key correctly before trying to go fast",
+      "the best way to predict the future is to create it one keystroke and one idea at a time",
+      "consistent daily practice is the single most reliable path to mastery in any skill you choose",
+      "clean code reads like well written prose it communicates its intent without needing explanation",
+      "first make it work then make it right then make it fast that is the engineering philosophy",
+    ],
+    words: [
+      "apple mango grape cherry banana lemon orange kiwi peach plum blueberry strawberry fig melon pear coconut papaya lime",
+      "cloud river mountain valley desert forest ocean beach island volcano jungle canyon plateau cliff waterfall glacier ridge",
+      "function variable constant object array string boolean number null undefined promise async await return export default class",
+      "fast slow heavy light warm cold bright dark rough smooth sharp flat hard soft loud quiet calm wild",
+      "build create design develop launch deploy monitor iterate improve reflect learn adapt evolve ship repeat measure optimize",
+      "one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty",
+      "alpha beta gamma delta epsilon zeta eta theta iota kappa lambda mu nu xi omicron pi rho sigma tau",
+    ],
+    quote: [
+      "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.",
+      "In the middle of difficulty lies opportunity. You cannot swim for new horizons until you have courage to lose sight of the shore.",
+      "The only way to do great work is to love what you do. If you have not found it yet, keep looking. Do not settle.",
+      "Code is like humor. When you have to explain it, it is bad. Always write code that humans can understand at a glance.",
+      "Stay hungry, stay foolish. The people who are crazy enough to think they can change the world are the ones who do.",
+      "It does not matter how slowly you go as long as you do not stop. Persistence is the single engine of all progress.",
+      "Success is not final, failure is not fatal. It is the courage to continue that counts above everything else in life.",
+      "The measure of intelligence is the ability to change. Those who cannot change their minds cannot change anything at all.",
+    ],
+    zen: [
+      "in the silence between keystrokes there is a kind of peace that only those who truly practice their craft can feel deep within",
+      "let your fingers move freely across the keys without fear of mistakes for every error is simply a chance to learn and grow",
+      "breathe in breathe out type each word with intention and let the rhythm of the keys carry you forward into a state of pure flow",
+      "the keyboard is an instrument and you are the musician play it with patience and presence and the music will come naturally to you",
+      "there is beauty in precision and grace in speed but the deepest satisfaction always comes from the quiet steady progress of practice",
+      "do not think about the words simply let them flow through your fingers and onto the screen one character at a time without judgment",
+    ],
+    punctuation: [
+      "Hello, world! This is TypeForge — the modern typing app. Are you ready? Let's go! Press: Tab + Enter to restart.",
+      "She said, \"I'll be back at 3:00 PM.\" He replied, \"Really? That's great!\" They both smiled — problem solved!",
+      "The error: 'undefined is not a function' — classic! Check your code; make sure all functions are called correctly.",
+      "Items needed: milk, bread (whole wheat), eggs (1 dozen), butter — don't forget the cheese! Total: $24.99.",
+      "Visit https://typeforge.dev — it's free! Email: hello@typeforge.dev. Phone: +1 (800) 555-0123. Open 24/7.",
+      "Dear Mr. Smith, I'm writing to confirm our meeting on Jan. 15th at 9:30 AM. Please bring your ID — thank you!",
+    ],
+    numbers: [
+      "1234 5678 9012 3456 7890 1111 2222 3333 4444 5555 6666 7777 8888 9999 0000 1357 2468",
+      "the answer is 42 and pi equals 3.14159 while euler's number is approximately 2.71828 in math",
+      "type 100 words in 60 seconds at 99 percent accuracy for a perfect score of 9900 points total",
+      "192 168 1 1 is localhost and 255 255 255 0 is the standard subnet mask for class c networks",
+      "in 2024 there are 366 days 8784 hours 527040 minutes and exactly 31622400 seconds to use well",
+      "the speed of light is 299792458 meters per second and the speed of sound is 343 meters per second",
+    ],
+  };
+
+  const TIME_DURATIONS  = [15, 30, 60, 120];
+  const WORDS_DURATIONS = [10, 25, 50, 100];
+
+  // ═══════════════════════════════════════════════════════
+  // STATE
+  // ═══════════════════════════════════════════════════════
+  let mode        = 'time';
+  let duration    = 60;       // seconds (time mode) OR word count (words mode)
+  let currentText = '';
+  let inputVal    = '';
+  let timerLeft   = 60;       // only used in time mode
+  let interval    = null;
+  let started     = false;
+  let finished    = false;
+  let correctChars = 0;
+  let wrongChars   = 0;
+  let totalTyped   = 0;
+  let tabDown      = false;
+  let startTime    = 0;       // performance.now() timestamp
+  let endTime      = 0;       // captured at test end — never recomputed
+
+  // ═══════════════════════════════════════════════════════
+  // DOM REFS
+  // ═══════════════════════════════════════════════════════
+  const display         = document.getElementById('quote-display');
+  const inputEl         = document.getElementById('typing-input');
+  const wpmEl           = document.getElementById('wpm-val');
+  const accEl           = document.getElementById('acc-val');
+  const timerEl         = document.getElementById('timer-val');
+  const charsEl         = document.getElementById('chars-val');
+  const timerStat       = document.getElementById('timer-stat');
+  const timerLbl        = document.getElementById('timer-lbl');
+  const progressEl      = document.getElementById('progressBar');
+  const wrap            = document.getElementById('typingWrap');
+  const overlay         = document.getElementById('overlay');
+  const subRow          = document.getElementById('subRow');
+  const unfocusedEl     = document.getElementById('unfocusedOverlay');
+
+  // ═══════════════════════════════════════════════════════
+  // URL PARAM INIT
+  // ═══════════════════════════════════════════════════════
+  (function initFromURL(){
+    const p = new URLSearchParams(location.search);
+    const m = p.get('mode');
+    const d = parseInt(p.get('duration'), 10);
+    if (m && DATA[m]) mode = m;
+    if (!isNaN(d) && d > 0) {
+      duration = d;
+    } else {
+      duration = mode === 'words' ? 25 : 60;
+    }
+  })();
+
+  // ═══════════════════════════════════════════════════════
+  // HELPERS
+  // ═══════════════════════════════════════════════════════
+  function elapsedSec() {
+    if (!startTime) return 0;
+    const t = endTime || performance.now();
+    return (t - startTime) / 1000;
+  }
+
+  function calcWPM(correct, secs) {
+    if (secs <= 0) return 0;
+    return Math.round((correct / 5) / (secs / 60));
+  }
+
+  function calcAcc(correct, total) {
+    if (total === 0) return 100;
+    return Math.round((correct / total) * 100);
+  }
+
+  function fmtTime(secs) {
+    const s = Math.round(secs);
+    if (s < 60) return s + 's';
+    return Math.floor(s / 60) + 'm ' + (s % 60) + 's';
+  }
+
+  function getEmoji(wpm) {
+    if (wpm >= 100) return '🚀';
+    if (wpm >= 80)  return '🔥';
+    if (wpm >= 60)  return '⚡';
+    if (wpm >= 40)  return '💪';
+    if (wpm >= 20)  return '🌱';
+    return '🐢';
+  }
+
+  function getTitle(wpm) {
+    if (wpm >= 100) return 'Unstoppable!';
+    if (wpm >= 80)  return 'Blazing Fast!';
+    if (wpm >= 60)  return 'Impressive!';
+    if (wpm >= 40)  return 'Nice Work!';
+    if (wpm >= 20)  return 'Getting There!';
+    return 'Keep Practicing!';
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // TEXT GENERATION
+  // ═══════════════════════════════════════════════════════
+  function buildText() {
+    const pool = DATA[mode];
+    // Shuffle to avoid immediate repeat
+    const idx = Math.floor(Math.random() * pool.length);
+    const base = pool[idx];
+
+    if (mode === 'time') {
+      // Fill enough chars for the duration: assume ~80 WPM worst case = ~400 chars/min
+      const needed = Math.ceil((duration / 60) * 400 * 5); // generous
+      let t = base;
+      let attempts = 0;
+      while (t.length < Math.max(needed, 400) && attempts < 30) {
+        const next = pool[Math.floor(Math.random() * pool.length)];
+        if (!t.endsWith(next)) t += ' ' + next;
+        attempts++;
+      }
+      return t.trim();
+    }
+
+    if (mode === 'words') {
+      // Collect words from multiple pool entries to ensure we have enough
+      let allWords = [];
+      for (const entry of pool) allWords = allWords.concat(entry.split(' '));
+      // Shuffle words
+      for (let i = allWords.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allWords[i], allWords[j]] = [allWords[j], allWords[i]];
+      }
+      return allWords.slice(0, duration).join(' ');
+    }
+
+    return base; // quote / zen / punctuation / numbers
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // RENDER
+  // ═══════════════════════════════════════════════════════
+  function renderDisplay(typed) {
+    const chars = currentText.split('');
+    let html = '';
+    for (let i = 0; i < chars.length; i++) {
+      const ch = chars[i];
+      let cls = 'char';
+      if (i < typed.length) {
+        cls += typed[i] === ch ? ' correct' : ' wrong';
+      } else if (i === typed.length) {
+        cls += ' cur';
+      }
+      // Safe HTML encode
+      const safe = ch === ' ' ? '&nbsp;'
+        : ch === '&' ? '&amp;'
+        : ch === '<' ? '&lt;'
+        : ch === '>' ? '&gt;'
+        : ch === '"' ? '&quot;'
+        : ch;
+      html += `<span class="${cls}">${safe}</span>`;
+    }
+    return html;
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // STATS UPDATE (called during test — not at end)
+  // ═══════════════════════════════════════════════════════
+  function updateLiveStats() {
+    if (!started) return;
+
+    let elapsed;
+    if (mode === 'time') {
+      // Use wall-clock elapsed, not timerLeft, for accurate mid-test WPM
+      elapsed = elapsedSec();
+    } else {
+      elapsed = elapsedSec();
+    }
+
+    const wpm = calcWPM(correctChars, elapsed);
+    const acc = calcAcc(correctChars, totalTyped);
+
+    wpmEl.textContent  = wpm;
+    accEl.textContent  = acc + '%';
+    charsEl.textContent = correctChars;
+    wpmEl.classList.remove('dim');
+    accEl.classList.remove('dim');
+    charsEl.classList.remove('dim');
+
+    // Progress bar
+    if (mode === 'time') {
+      progressEl.style.width = ((duration - timerLeft) / duration * 100) + '%';
+    } else {
+      progressEl.style.width = Math.min(100, inputVal.length / currentText.length * 100) + '%';
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // MODE MANAGEMENT
+  // ═══════════════════════════════════════════════════════
+  function setMode(m) {
+    mode = m;
+    if (m === 'time')  duration = 60;
+    if (m === 'words') duration = 25;
+    updateModePills();
+    buildSubRow();
+    resetTest(false); // don't auto-focus on mode switch (UX friendly)
+  }
+
+  function setDuration(d) {
+    duration = d;
+    updateSubPills();
+    resetTest(false);
+  }
+
+  function updateModePills() {
+    document.querySelectorAll('[data-group="mode"]').forEach(b => {
+      b.classList.toggle('active', b.dataset.val === mode);
+    });
+  }
+
+  function buildSubRow() {
+    subRow.innerHTML = '';
+    document.getElementById('zen-hint').style.display = 'none';
+
+    if (mode === 'time') {
+      const lbl = document.createElement('span');
+      lbl.className = 'mode-label';
+      lbl.textContent = 'Secs';
+      subRow.appendChild(lbl);
+      TIME_DURATIONS.forEach(s => {
+        const b = document.createElement('button');
+        b.className = 'pill' + (s === duration ? ' active' : '');
+        b.textContent = s + 's';
+        b.onclick = () => setDuration(s);
+        subRow.appendChild(b);
+      });
+    } else if (mode === 'words') {
+      const lbl = document.createElement('span');
+      lbl.className = 'mode-label';
+      lbl.textContent = 'Words';
+      subRow.appendChild(lbl);
+      WORDS_DURATIONS.forEach(w => {
+        const b = document.createElement('button');
+        b.className = 'pill' + (w === duration ? ' active' : '');
+        b.textContent = w;
+        b.onclick = () => setDuration(w);
+        subRow.appendChild(b);
+      });
+    } else if (mode === 'zen') {
+      subRow.innerHTML = '<span style="font-size:.76rem;color:var(--text3);">No timer · Flow freely · Press <kbd style=\'font-family:JetBrains Mono,monospace;font-size:.7rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:.05rem .4rem;\'>Esc</kbd> when done</span>';
+      document.getElementById('zen-hint').style.display = 'inline';
+    } else {
+      subRow.innerHTML = '<span style="font-size:.76rem;color:var(--text3);">Complete the passage to finish</span>';
+    }
+  }
+
+  function updateSubPills() {
+    const pills = subRow.querySelectorAll('.pill');
+    const arr = mode === 'time' ? TIME_DURATIONS : WORDS_DURATIONS;
+    pills.forEach((b, i) => b.classList.toggle('active', arr[i] === duration));
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // RESET
+  // ═══════════════════════════════════════════════════════
+  function resetTest(autoFocus = true) {
+    // 1. Kill any running timer immediately
+    if (interval) { clearInterval(interval); interval = null; }
+
+    // 2. Reset state
+    started      = false;
+    finished     = false;
+    inputVal     = '';
+    totalTyped   = 0;
+    correctChars = 0;
+    wrongChars   = 0;
+    timerLeft    = duration;
+    startTime    = 0;
+    endTime      = 0;
+
+    // 3. Build new text
+    currentText = buildText();
+
+    // 4. Render display
+    display.innerHTML = renderDisplay('');
+
+    // 5. Clear input
+    inputEl.value = '';
+
+    // 6. Reset stat displays
+    wpmEl.textContent   = '–'; wpmEl.classList.add('dim');
+    accEl.textContent   = '–'; accEl.classList.add('dim');
+    charsEl.textContent = '0'; charsEl.classList.add('dim');
+    progressEl.style.width = '0%';
+
+    // 7. Timer display
+    timerStat.style.display = '';
+    timerLbl.textContent = 'Time';
+    if (mode === 'time') {
+      timerEl.textContent = duration;
+      timerEl.className = 'stat-val';
+    } else if (mode === 'zen') {
+      timerStat.style.display = 'none';
+    } else {
+      timerEl.textContent = '0s';
+      timerEl.className = 'stat-val dim';
+    }
+
+    // 8. UI state
+    overlay.classList.remove('show');
+    wrap.classList.remove('focused');
+    unfocusedEl.classList.add('visible');
+
+    // 9. Optionally focus
+    if (autoFocus) {
+      setTimeout(focusInput, 60);
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // FOCUS
+  // ═══════════════════════════════════════════════════════
+  function focusInput() {
+    inputEl.focus();
+    wrap.classList.add('focused');
+    unfocusedEl.classList.remove('visible');
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // TIMER
+  // ═══════════════════════════════════════════════════════
+  function startTimer() {
+    startTime = performance.now();
+
+    if (mode === 'time') {
+      // Countdown
+      interval = setInterval(() => {
+        if (finished) { clearInterval(interval); interval = null; return; }
+        timerLeft = Math.max(0, duration - Math.round(elapsedSec()));
+        timerEl.textContent = timerLeft;
+
+        if (timerLeft <= 5)       timerEl.className = 'stat-val timer-danger';
+        else if (timerLeft <= 15) timerEl.className = 'stat-val timer-warn';
+        else                      timerEl.className = 'stat-val';
+
+        updateLiveStats();
+
+        if (timerLeft <= 0) {
+          clearInterval(interval);
+          interval = null;
+          endTest();
+        }
+      }, 200); // 200ms poll for smooth countdown
+
+    } else if (mode !== 'zen') {
+      // Count up (words / quote / punctuation / numbers)
+      interval = setInterval(() => {
+        if (finished) { clearInterval(interval); interval = null; return; }
+        timerEl.textContent = fmtTime(elapsedSec());
+        timerEl.className = 'stat-val';
+        updateLiveStats();
+      }, 200);
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // INPUT HANDLER
+  // ═══════════════════════════════════════════════════════
+  inputEl.addEventListener('input', () => {
+    if (finished) {
+      inputEl.value = inputVal; // revert
+      return;
+    }
+
+    // Clamp to text length
+    if (inputEl.value.length > currentText.length) {
+      inputEl.value = inputEl.value.slice(0, currentText.length);
+    }
+    inputVal = inputEl.value;
+
+    // Start on first character
+    if (!started && inputVal.length > 0) {
+      started = true;
+      startTimer();
+    }
+
+    // Recount on every input (handles backspace correctly)
+    totalTyped   = inputVal.length;
+    correctChars = 0;
+    wrongChars   = 0;
+    for (let i = 0; i < inputVal.length; i++) {
+      if (inputVal[i] === currentText[i]) correctChars++;
+      else wrongChars++;
+    }
+
+    // Render
+    display.innerHTML = renderDisplay(inputVal);
+    updateLiveStats();
+
+    // Auto-finish for non-time modes when text is fully typed
+    if (mode !== 'time' && inputVal.length === currentText.length) {
+      // Finish immediately — don't wait for timer tick
+      if (interval) { clearInterval(interval); interval = null; }
+      // Small delay for visual feedback of last character
+      setTimeout(endTest, 120);
+    }
+  });
+
+  inputEl.addEventListener('paste', e => e.preventDefault());
+
+  // Keep focus during an active test (but NOT when modal is open)
+  inputEl.addEventListener('blur', () => {
+    if (started && !finished && !overlay.classList.contains('show')) {
+      // Slight delay to allow click targets on modal/buttons to register
+      setTimeout(() => {
+        if (!finished && !overlay.classList.contains('show')) {
+          inputEl.focus();
+        }
+      }, 120);
+    }
+  });
+
+  // Clicking on the typing wrap focuses input
+  wrap.addEventListener('click', focusInput);
+
+  // ═══════════════════════════════════════════════════════
+  // END TEST
+  // ═══════════════════════════════════════════════════════
+  function endTest() {
+    if (finished) return; // guard against double-call
+    finished = true;
+
+    // Capture exact end time before doing anything else
+    endTime = performance.now();
+
+    // Kill timer
+    if (interval) { clearInterval(interval); interval = null; }
+
+    // Compute final stats
+    let elapsedForWPM;
+    if (mode === 'time') {
+      // Use actual elapsed, not full duration (they may have finished early in non-standard scenarios)
+      elapsedForWPM = Math.min(elapsedSec(), duration);
+    } else {
+      elapsedForWPM = elapsedSec();
+    }
+
+    const wpm = calcWPM(correctChars, elapsedForWPM);
+    const acc = calcAcc(correctChars, totalTyped);
+    const timeTaken = elapsedSec();
+
+    // Fill modal
+    document.getElementById('m-wpm').textContent   = wpm;
+    document.getElementById('m-acc').textContent   = acc + '%';
+    document.getElementById('m-chars').textContent = correctChars;
+    document.getElementById('m-wrong').textContent = wrongChars;
+    document.getElementById('m-time').textContent  = fmtTime(timeTaken);
+    document.getElementById('m-emoji').textContent = getEmoji(wpm);
+    document.getElementById('m-title').textContent = getTitle(wpm);
+
+    // Personal best (per mode + duration)
+    const pbKey = 'tf-pb-' + mode + '-' + duration;
+    const pb    = parseInt(localStorage.getItem(pbKey) || '0', 10);
+    const pbEl  = document.getElementById('m-pb');
+    if (wpm > pb && wpm > 0) {
+      localStorage.setItem(pbKey, wpm);
+      pbEl.classList.add('show');
+    } else {
+      pbEl.classList.remove('show');
+    }
+
+    // Show modal
+    overlay.classList.add('show');
+
+    // Remove focus trap
+    wrap.classList.remove('focused');
+    inputEl.blur();
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // KEYBOARD SHORTCUTS
+  // ═══════════════════════════════════════════════════════
+  document.addEventListener('keydown', e => {
+    // Tab + Enter = restart (Tab is captured, Enter triggers)
+    if (e.key === 'Tab') {
+      tabDown = true;
+      e.preventDefault(); // prevent focus shift
+      return;
+    }
+
+    if (e.key === 'Enter') {
+      if (tabDown) {
+        e.preventDefault();
+        resetTest(true);
+        return;
+      }
+      // Enter alone: focus input if not started
+      if (!started && !overlay.classList.contains('show')) {
+        e.preventDefault();
+        focusInput();
+      }
+      return;
+    }
+
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      if (overlay.classList.contains('show')) {
+        // Close modal without resetting
+        overlay.classList.remove('show');
+        return;
+      }
+      if (mode === 'zen' && started && !finished) {
+        endTest(); // Esc finishes zen mode
+      } else {
+        resetTest(true);
+      }
+      return;
+    }
+  });
+
+  document.addEventListener('keyup', e => {
+    if (e.key === 'Tab') tabDown = false;
+  });
+
+  // ═══════════════════════════════════════════════════════
+  // THEME
+  // ═══════════════════════════════════════════════════════
+  const themeToggle = document.getElementById('themeToggle');
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next    = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('tf-theme', next);
+  });
+
+  // Apply saved theme before paint
+  const savedTheme = localStorage.getItem('tf-theme');
+  if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+
+  // ═══════════════════════════════════════════════════════
+  // MODAL BACKDROP
+  // ═══════════════════════════════════════════════════════
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('show');
+  });
+
+  // ═══════════════════════════════════════════════════════
+  // BOOT
+  // ═══════════════════════════════════════════════════════
+  updateModePills();
+  buildSubRow();
+  resetTest(false); // don't auto-focus on page load (user intent required)
+  </script>
+</body>
+</html>

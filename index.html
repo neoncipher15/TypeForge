@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TypeForge — Forge Your Typing Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root[data-theme="dark"] {
+      --bg:         #0e0e1a;
+      --bg2:        #16162a;
+      --bg3:        rgba(255,255,255,0.04);
+      --border:     rgba(255,255,255,0.07);
+      --border-h:   rgba(99,179,237,0.5);
+      --text:       #e2e8f0;
+      --text2:      #94a3b8;
+      --text3:      #4a5568;
+      --cyan:       #63b3ed;
+      --purple:     #9f7aea;
+      --pink:       #f687b3;
+      --green:      #68d391;
+      --yellow:     #f6e05e;
+      --glow-c:     rgba(99,179,237,0.12);
+      --glow-p:     rgba(159,122,234,0.12);
+      --nav-bg:     rgba(14,14,26,0.88);
+      --card-bg:    rgba(22,22,42,0.9);
+      --shadow:     0 20px 60px rgba(0,0,0,0.5);
+    }
+    :root[data-theme="light"] {
+      --bg:         #f5f7ff;
+      --bg2:        #ffffff;
+      --bg3:        rgba(0,0,0,0.03);
+      --border:     rgba(0,0,0,0.07);
+      --border-h:   rgba(99,102,241,0.5);
+      --text:       #1a1a2e;
+      --text2:      #4a5568;
+      --text3:      #a0aec0;
+      --cyan:       #3182ce;
+      --purple:     #6b46c1;
+      --pink:       #d53f8c;
+      --green:      #276749;
+      --yellow:     #b7791f;
+      --glow-c:     rgba(49,130,206,0.08);
+      --glow-p:     rgba(107,70,193,0.08);
+      --nav-bg:     rgba(245,247,255,0.9);
+      --card-bg:    rgba(255,255,255,0.95);
+      --shadow:     0 20px 60px rgba(0,0,0,0.08);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{
+      font-family:'Inter',sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+      transition:background .4s,color .4s;
+    }
+
+    /* BG orbs */
+    .orb{
+      position:fixed;border-radius:50%;pointer-events:none;filter:blur(80px);z-index:0;
+      transition:opacity .4s;
+    }
+    .orb1{width:600px;height:600px;background:var(--glow-c);top:-200px;left:-200px;}
+    .orb2{width:500px;height:500px;background:var(--glow-p);bottom:-150px;right:-150px;}
+
+    /* NAV */
+    nav{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      background:var(--nav-bg);
+      backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+      border-bottom:1px solid var(--border);
+      height:60px;display:flex;align-items:center;
+      padding:0 2.5rem;justify-content:space-between;
+      transition:background .4s,border-color .4s;
+    }
+    .logo{
+      font-weight:900;font-size:1.3rem;letter-spacing:-0.5px;
+      background:linear-gradient(135deg,var(--cyan),var(--purple));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .nav-links{display:flex;align-items:center;gap:2rem;}
+    .nav-links a{
+      font-size:.85rem;font-weight:500;color:var(--text2);
+      transition:color .2s;text-decoration:none;
+    }
+    .nav-links a:hover{color:var(--cyan);}
+
+    /* Toggle */
+    .toggle{
+      width:48px;height:26px;background:var(--bg2);
+      border:1px solid var(--border);border-radius:50px;
+      cursor:pointer;position:relative;transition:background .3s,border-color .3s;
+    }
+    .toggle::after{
+      content:'';position:absolute;top:3px;left:3px;
+      width:18px;height:18px;border-radius:50%;
+      background:linear-gradient(135deg,var(--cyan),var(--purple));
+      transition:transform .3s cubic-bezier(.4,0,.2,1);
+      box-shadow:0 0 10px var(--glow-c);
+    }
+    [data-theme="light"] .toggle::after{transform:translateX(22px);}
+
+    /* HERO */
+    .hero{
+      position:relative;z-index:1;
+      min-height:100vh;
+      display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      text-align:center;padding:5rem 1.5rem 3rem;
+    }
+    .badge{
+      display:inline-flex;align-items:center;gap:.5rem;
+      background:var(--bg3);border:1px solid var(--border);
+      border-radius:50px;padding:.35rem 1rem;
+      font-size:.75rem;font-weight:600;color:var(--cyan);
+      margin-bottom:2rem;letter-spacing:.5px;text-transform:uppercase;
+      animation:fadeUp .6s ease both;
+    }
+    .badge-dot{
+      width:6px;height:6px;border-radius:50%;background:var(--cyan);
+      animation:pulse 2s infinite;
+    }
+    h1{
+      font-size:clamp(3.5rem,10vw,8rem);font-weight:900;
+      letter-spacing:-3px;line-height:.95;margin-bottom:1.5rem;
+      animation:fadeUp .7s .08s ease both;
+    }
+    .grad{
+      background:linear-gradient(135deg,var(--cyan) 0%,var(--purple) 50%,var(--pink) 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      background-size:200%;animation:gradAnim 5s ease infinite;
+    }
+    .hero-sub{
+      font-size:clamp(1rem,2vw,1.2rem);color:var(--text2);
+      max-width:500px;line-height:1.8;margin-bottom:3rem;
+      animation:fadeUp .7s .16s ease both;
+    }
+    .cta-group{
+      display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;
+      animation:fadeUp .7s .24s ease both;
+    }
+    .btn-primary{
+      display:inline-flex;align-items:center;gap:.6rem;
+      background:linear-gradient(135deg,var(--cyan),var(--purple));
+      color:#fff;font-weight:700;font-size:1rem;
+      padding:.9rem 2.4rem;border-radius:50px;
+      text-decoration:none;border:none;cursor:pointer;
+      transition:transform .2s,box-shadow .2s;
+      box-shadow:0 4px 24px var(--glow-c);
+      font-family:'Inter',sans-serif;
+    }
+    .btn-primary:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 10px 36px var(--glow-c);}
+    .btn-secondary{
+      display:inline-flex;align-items:center;gap:.6rem;
+      background:var(--bg3);border:1px solid var(--border);
+      color:var(--text2);font-weight:600;font-size:1rem;
+      padding:.9rem 2rem;border-radius:50px;
+      text-decoration:none;cursor:pointer;
+      transition:border-color .2s,color .2s,transform .2s;
+      font-family:'Inter',sans-serif;
+    }
+    .btn-secondary:hover{border-color:var(--border-h);color:var(--text);transform:translateY(-2px);}
+
+    /* STATS ROW */
+    .hero-stats{
+      display:flex;gap:3rem;margin-top:4rem;flex-wrap:wrap;justify-content:center;
+      animation:fadeUp .7s .32s ease both;
+    }
+    .hs{text-align:center;}
+    .hs-val{
+      font-size:2.2rem;font-weight:900;
+      background:linear-gradient(135deg,var(--cyan),var(--purple));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .hs-lbl{font-size:.75rem;color:var(--text3);text-transform:uppercase;letter-spacing:2px;font-weight:600;margin-top:.2rem;}
+
+    /* SCROLL HINT */
+    .scroll-hint{
+      position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+      color:var(--text3);font-size:.75rem;
+      display:flex;flex-direction:column;align-items:center;gap:.3rem;
+      animation:fadeIn 1s 1s ease both;
+    }
+    .scroll-hint span{animation:bounce 1.5s infinite;}
+
+    /* SECTION */
+    .sec{position:relative;z-index:1;padding:6rem 2rem;max-width:1100px;margin:0 auto;}
+    .sec-tag{font-size:.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:.7rem;}
+    .sec-title{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;letter-spacing:-1px;margin-bottom:1rem;}
+    .sec-desc{color:var(--text2);font-size:1rem;max-width:480px;line-height:1.8;margin-bottom:3rem;}
+
+    /* TEST MODES PREVIEW */
+    .modes-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:1.2rem;
+    }
+    .mode-card{
+      background:var(--card-bg);border:1px solid var(--border);
+      border-radius:16px;padding:1.6rem 1.4rem;
+      backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+      transition:border-color .25s,transform .25s,box-shadow .25s,background .4s;
+      cursor:pointer;text-decoration:none;
+      display:flex;flex-direction:column;gap:.6rem;
+    }
+    .mode-card:hover{
+      border-color:var(--border-h);transform:translateY(-5px);
+      box-shadow:0 16px 40px var(--glow-c);
+    }
+    .mode-icon{font-size:1.8rem;}
+    .mode-name{font-weight:700;font-size:1rem;}
+    .mode-desc{font-size:.82rem;color:var(--text2);line-height:1.5;}
+    .mode-tag{
+      display:inline-block;font-size:.65rem;font-weight:700;
+      text-transform:uppercase;letter-spacing:1.5px;
+      background:var(--bg3);border:1px solid var(--border);
+      border-radius:50px;padding:.2rem .7rem;color:var(--text2);
+      width:fit-content;margin-top:.3rem;
+    }
+
+    /* FEATURES */
+    .feat-grid{
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem;
+    }
+    .feat-card{
+      background:var(--card-bg);border:1px solid var(--border);
+      border-radius:14px;padding:1.6rem;
+      backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+      transition:border-color .25s,transform .25s,background .4s;
+    }
+    .feat-card:hover{border-color:var(--border-h);transform:translateY(-4px);}
+    .feat-icon{
+      width:44px;height:44px;border-radius:12px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.3rem;margin-bottom:1rem;
+    }
+    .ic-c{background:rgba(99,179,237,.12);}
+    .ic-p{background:rgba(159,122,234,.12);}
+    .ic-g{background:rgba(104,211,145,.12);}
+    .ic-y{background:rgba(246,224,94,.12);}
+    .ic-k{background:rgba(246,135,179,.12);}
+    .ic-o{background:rgba(252,211,77,.12);}
+    .feat-card h3{font-size:.95rem;font-weight:700;margin-bottom:.4rem;}
+    .feat-card p{font-size:.82rem;color:var(--text2);line-height:1.6;}
+
+    /* FOOTER */
+    footer{
+      position:relative;z-index:1;
+      border-top:1px solid var(--border);
+      padding:2.5rem 2rem;text-align:center;
+      transition:border-color .4s;
+    }
+    .footer-logo{
+      font-weight:900;font-size:1.2rem;
+      background:linear-gradient(135deg,var(--cyan),var(--purple));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      margin-bottom:.4rem;
+    }
+    footer p{font-size:.8rem;color:var(--text3);}
+    .heart{color:#f687b3;}
+    .owner{color:var(--purple);font-weight:700;}
+
+    /* KEYFRAMES */
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+    @keyframes gradAnim{0%,100%{background-position:0%}50%{background-position:100%}}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
+    @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
+
+    @media(max-width:600px){
+      nav{padding:0 1rem;}
+      .nav-links a{display:none;}
+      h1{letter-spacing:-2px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+
+  <nav>
+    <div class="logo">TypeForge</div>
+    <div class="nav-links">
+      <a href="test.html">Practice</a>
+      <a href="#modes">Modes</a>
+      <a href="#features">Features</a>
+      <button class="toggle" id="themeToggle" aria-label="Toggle theme"></button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="badge"><div class="badge-dot"></div>Free &amp; Open to all</div>
+    <h1><span class="grad">TypeForge</span></h1>
+    <p class="hero-sub">The modern typing arena. Track your WPM, smash accuracy records, and choose from multiple test modes — just like the pros.</p>
+    <div class="cta-group">
+      <a href="test.html" class="btn-primary">Start Typing ⚡</a>
+      <a href="#modes" class="btn-secondary">Explore Modes →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hs"><div class="hs-val">10+</div><div class="hs-lbl">Test Modes</div></div>
+      <div class="hs"><div class="hs-val">∞</div><div class="hs-lbl">Quotes</div></div>
+      <div class="hs"><div class="hs-val">100%</div><div class="hs-lbl">Free</div></div>
+    </div>
+    <div class="scroll-hint"><span>↓</span><span>scroll</span></div>
+  </section>
+
+  <!-- MODES PREVIEW -->
+  <div id="modes" style="position:relative;z-index:1;">
+    <div class="sec">
+      <div class="sec-tag">Test Modes</div>
+      <h2 class="sec-title">Every kind of test you need</h2>
+      <p class="sec-desc">From quick 15-second sprints to long-form endurance challenges — pick your battlefield.</p>
+      <div class="modes-grid">
+        <a href="test.html?mode=time&duration=15" class="mode-card">
+          <div class="mode-icon">⏱️</div>
+          <div class="mode-name">Time Mode</div>
+          <div class="mode-desc">Race against the clock. 15, 30, 60, or 120 seconds — type as much as you can.</div>
+          <span class="mode-tag">Popular</span>
+        </a>
+        <a href="test.html?mode=words" class="mode-card">
+          <div class="mode-icon">📝</div>
+          <div class="mode-name">Word Count</div>
+          <div class="mode-desc">Complete 10, 25, 50, or 100 words as fast as possible.</div>
+          <span class="mode-tag">Classic</span>
+        </a>
+        <a href="test.html?mode=quote" class="mode-card">
+          <div class="mode-icon">💬</div>
+          <div class="mode-name">Quote Mode</div>
+          <div class="mode-desc">Type famous quotes from literature, philosophy, and tech.</div>
+          <span class="mode-tag">New</span>
+        </a>
+        <a href="test.html?mode=zen" class="mode-card">
+          <div class="mode-icon">🧘</div>
+          <div class="mode-name">Zen Mode</div>
+          <div class="mode-desc">No timer, no pressure. Just you and the keyboard — pure flow state.</div>
+          <span class="mode-tag">Chill</span>
+        </a>
+        <a href="test.html?mode=punctuation" class="mode-card">
+          <div class="mode-icon">✍️</div>
+          <div class="mode-name">Punctuation</div>
+          <div class="mode-desc">Texts loaded with commas, periods, and symbols to sharpen precision.</div>
+          <span class="mode-tag">Hard</span>
+        </a>
+        <a href="test.html?mode=numbers" class="mode-card">
+          <div class="mode-icon">🔢</div>
+          <div class="mode-name">Numbers</div>
+          <div class="mode-desc">Train your number row — type sequences of digits and mixed content.</div>
+          <span class="mode-tag">Challenge</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div id="features" style="position:relative;z-index:1;">
+    <div class="sec">
+      <div class="sec-tag">Features</div>
+      <h2 class="sec-title">Built for speed demons</h2>
+      <p class="sec-desc">Every detail designed to help you type faster, smarter, and more accurately.</p>
+      <div class="feat-grid">
+        <div class="feat-card"><div class="feat-icon ic-c">⚡</div><h3>Live WPM</h3><p>Real-time words-per-minute counter updating every second as you type.</p></div>
+        <div class="feat-card"><div class="feat-icon ic-p">🎯</div><h3>Accuracy Tracker</h3><p>Per-character precision tracking with color-coded feedback — green, red, cursor.</p></div>
+        <div class="feat-card"><div class="feat-icon ic-g">🌙</div><h3>Dark & Light Theme</h3><p>Switch between deep dark and crisp light with a single click, anytime.</p></div>
+        <div class="feat-card"><div class="feat-icon ic-y">📊</h3><h3>Detailed Results</h3><p>Post-test breakdown: WPM, accuracy, correct chars, and an emoji performance rating.</p></div>
+        <div class="feat-card"><div class="feat-icon ic-k">⌨️</div><h3>Keyboard-First</h3><p>Tab+Enter to restart, Enter to focus — never touch the mouse during a test.</p></div>
+        <div class="feat-card"><div class="feat-icon ic-o">🏆</div><h3>Personal Bests</h3><p>Your top scores saved locally so you always know what record to beat.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">TypeForge</div>
+    <p>Made with <span class="heart">❤️</span> by <span class="owner">Shaurya Chauhan</span></p>
+    <p style="margin-top:.3rem;">© 2026 TypeForge. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Theme
+    const toggle = document.getElementById('themeToggle');
+    toggle.addEventListener('click',()=>{
+      const t = document.documentElement.getAttribute('data-theme');
+      const next = t==='dark'?'light':'dark';
+      document.documentElement.setAttribute('data-theme',next);
+      localStorage.setItem('tf-theme',next);
+    });
+    const saved = localStorage.getItem('tf-theme');
+    if(saved) document.documentElement.setAttribute('data-theme',saved);
+  </script>
+</body>
+</html>
